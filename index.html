@@ -17,99 +17,99 @@
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
-    <!-- Global SVG Definitions -->
-    <svg width="0" height="0" style="position: absolute; width: 0; height: 0; overflow: hidden;">
+
+    <!-- Global SVG Defs for Gradients -->
+    <svg width="0" height="0">
       <defs>
         <linearGradient id="gold-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style="stop-color:#fce288;stop-opacity:1" />
-          <stop offset="50%" style="stop-color:#d4af37;stop-opacity:1" />
-          <stop offset="100%" style="stop-color:#c5a028;stop-opacity:1" />
+          <stop offset="0%" stop-color="#FFD700" />
+          <stop offset="50%" stop-color="#FDB931" />
+          <stop offset="100%" stop-color="#FFD700" />
         </linearGradient>
       </defs>
     </svg>
 
-    <!-- Background Canvas -->
+    <!-- Dynamic Background -->
     <canvas id="bg-canvas"></canvas>
 
-    <!-- Main Application Container -->
-      <!-- New Header Layout: Location (Left) vs Time (Right) -->
-      <header class="dashboard-header">
-        <div class="header-left">
-          <h1 id="city-name">CHRISTCHURCH</h1>
-          <h2 id="country-name">NEW ZEALAND</h2>
-        </div>
-        <div class="header-right">
-          <div class="time-display-large">
-            <span id="clock-hours">--</span><span class="blink">:</span><span id="clock-minutes">--</span>
-            <span id="am-pm" class="am-pm">--</span>
-          </div>
-          <div class="date-display-small" id="date-display">--</div>
-        </div>
-      </header>
-
-      <!-- Main Weather Section (Centered) -->
-      <section class="main-weather">
-        <div class="weather-icon-large" id="current-icon-container">
-            <!-- Icon injected via JS -->
-        </div>
-        <div class="temp-container">
-            <span id="current-temp">--</span><span class="degree-symbol">°</span>
-        </div>
-        <div class="weather-details-stacked">
-            <div class="condition-text" id="current-condition">--</div>
-            <div class="high-low-row">
-                <span>H: <span id="temp-high">--</span>°</span>
-                <span class="pipe">|</span>
-                <span>L: <span id="temp-low">--</span>°</span>
+    <!-- Main App Container (Grid Layout) -->
+    <div class="app-container">
+        
+        <!-- ROW 1: Header -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <h1>Christchurch</h1>
+                <h2>New Zealand</h2>
             </div>
-        </div>
-      </section>
-
-      <!-- Dashboard Cards Row -->
-      <section class="dashboard-cards">
-        <!-- Card 1: Next Sunrise -->
-        <div class="info-card">
-            <div class="card-icon" id="sunrise-icon"></div>
-            <div class="card-label">NEXT SUNRISE</div>
-            <div class="card-value" id="sunrise-time">--:--</div>
-        </div>
-
-        <!-- Card 2: Wind -->
-        <div class="info-card">
-            <div class="card-icon" id="wind-icon"></div>
-            <div class="card-label">WIND</div>
-            <div class="card-value">
-                <span id="wind-speed">--</span> <span class="unit">km/h</span> 
-                <span id="wind-direction" class="direction-text">--</span>
+            <div class="header-right">
+                <div class="time-display-large">
+                    <span id="clock-hours">--</span><span class="blink">:</span><span id="clock-minutes">--</span>
+                    <span id="am-pm" class="am-pm">--</span>
+                </div>
+                <div class="date-display" id="date-display">--</div>
             </div>
-        </div>
+        </header>
 
-        <!-- Card 3: Rain (Last Hour) -->
-        <div class="info-card">
-            <div class="card-icon" id="rain-icon"></div>
-            <div class="card-label">RAIN (LAST HOUR)</div>
-            <div class="card-value">
-                <span id="rain-amount">0</span><span class="unit">mm</span>
+        <!-- ROW 2: Main Weather (Fills available space) -->
+        <section class="main-weather">
+            <div class="weather-icon-large" id="current-icon-container">
+                <!-- Icon injected by JS -->
             </div>
-        </div>
+            <div class="temp-container">
+                <span id="current-temp">--</span><span class="degree-symbol">°</span>
+            </div>
+            <div class="weather-details-stacked">
+                <div class="condition-text" id="current-condition">--</div>
+                <div class="high-low-row">
+                    H: <span id="temp-high">--</span><span class="pipe">|</span>L: <span id="temp-low">--</span>
+                </div>
+            </div>
+        </section>
 
-        <!-- Card 4: Next Sunset -->
-        <div class="info-card">
-            <div class="card-icon" id="sunset-icon"></div>
-            <div class="card-label">NEXT SUNSET</div>
-            <div class="card-value" id="sunset-time">--:--</div>
-        </div>
-      </section>
+        <!-- ROW 3: Info Cards -->
+        <section class="dashboard-cards">
+            <div class="info-card">
+                <div class="card-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg> 
+                </div>
+                <div class="card-label">Wind</div>
+                <div class="card-value"><span id="wind-speed">--</span> <span class="unit">km/h</span><span id="wind-dir" class="direction-text"></span></div>
+            </div>
+            <div class="info-card">
+                <div class="card-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 4.4L18 10h-6v8h-4v-8H4l6-5.6zM13 13v8h-2v-8h2z"/></svg>
+                </div>
+                <div class="card-label">Rain</div>
+                <div class="card-value"><span id="precipitation">--</span> <span class="unit">mm</span></div>
+            </div>
+            <div class="info-card">
+                <div class="card-icon">
+                   <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" opacity=".5"/><path d="M12 2L4 12h16L12 2zm0 8l-3 4h6l-3-4z"/></svg>
+                </div>
+                <div class="card-label">Sunrise</div>
+                <div class="card-value" id="sunrise-time">--:--</div>
+            </div>
+            <div class="info-card">
+                <div class="card-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 18L4 12h16l-8 6zm0-8l3-4H9l3 4z"/></svg>
+                </div>
+                <div class="card-label">Sunset</div>
+                <div class="card-value" id="sunset-time">--:--</div>
+            </div>
+        </section>
 
-      <!-- Footer: 7-Day Forecast -->
-      <footer class="forecast-footer">
-        <div class="forecast-container" id="forecast-container">
-          <!-- Forecast Items injected via JS -->
-        </div>
-        <div class="progress-bar"></div>
-      </footer>
+        <!-- ROW 4: Footer (Forecast + Progress) -->
+        <footer class="forecast-footer">
+            <div class="forecast-container" id="forecast-container">
+                <!-- Forecast Items Injected Here -->
+            </div>
+            <div class="update-bar-container">
+                <div class="progress-bar" id="update-progress"></div>
+            </div>
+        </footer>
 
-    <!-- Scripts -->
+    </div> <!-- End .app-container -->
+
     <script src="js/app.js"></script>
-  </body>
+</body>
 </html>

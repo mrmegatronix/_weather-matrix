@@ -24,10 +24,13 @@ body {
 
 #bg-canvas {
   position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
+  top: 5vh; left: 5vw; /* Match the 5% margin */
+  width: 90vw; height: 90vh;
   z-index: 0;
   opacity: 1;
+  border-radius: 16px; /* Soften the corners of the active area */
+  box-shadow: 0 0 50px rgba(0,0,0,0.8); /* Depth */
+  background: radial-gradient(circle at center, #111 0%, #000 100%); /* Ensure it's not transparent */
 }
 
 /* --- Layout: 5% Margin + CSS Grid for No Clipping --- */
@@ -41,6 +44,11 @@ body {
   display: grid;
   grid-template-rows: auto 1fr auto auto; /* Header, Weather(Fill), Cards, Footer */
   gap: 2vh;
+  
+  /* Optional: Add a subtle border to the whole content frame to visualize the buffer */
+  border: 1px solid rgba(255, 215, 0, 0.1);
+  border-radius: 16px;
+  padding: 2vh; /* Internal padding */
 }
 
 /* --- Row 1: Header --- */
@@ -80,7 +88,7 @@ body {
 
 .time-display-large {
   font-family: var(--font-heading);
-  font-size: min(10vh, 6vw); /* Larger */
+  font-size: min(9vh, 6vw); /* Readable but safe */
   font-weight: 700;
   line-height: 0.9;
   color: #fff;
@@ -111,21 +119,21 @@ body {
   justify-content: center;
   align-items: center;
   gap: 4vw;
-  padding-bottom: 5vh; /* Push content slightly up so cards have room below */
+  padding-bottom: 2vh; /* Reduced padding to fit text */
 }
 
 .weather-icon-large {
-  width: min(30vh, 18vw); /* Larger */
-  height: min(30vh, 18vw);
+  width: min(20vh, 15vw); 
+  height: min(20vh, 15vw);
   filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.4));
 }
 .weather-icon-large svg { width: 100%; height: 100%; }
 
 .temp-container {
   font-family: var(--font-heading);
-  font-size: min(32vh, 22vw); /* MASSIVE for TV */
+  font-size: min(22vh, 18vw); /* 22vh is massive but safe for 1080p */
   font-weight: 700;
-  line-height: 0.8;
+  line-height: 0.9;
   color: #fff;
 }
 .degree-symbol {
@@ -141,7 +149,7 @@ body {
 }
 
 .condition-text {
-  font-size: min(6vh, 4vw); /* Larger */
+  font-size: min(4vh, 3vw); 
   font-weight: 600;
   text-transform: uppercase;
   margin-bottom: 10px;
@@ -149,7 +157,7 @@ body {
 }
 .high-low-row {
   font-family: var(--font-heading);
-  font-size: min(4vh, 2.5vw); /* Larger */
+  font-size: min(3vh, 2vw);
   color: rgba(255,255,255,0.8);
 }
 .high-low-row span { color: var(--accent-gold); }
