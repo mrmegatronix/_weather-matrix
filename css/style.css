@@ -1,11 +1,11 @@
 :root {
-  --bg-color: #050505;
-  --accent-color: #d4af37; /* Gold */
-  --text-color: #ffffff;
+  --bg-color: #2b3945; /* Dark Slate Blue/Grey from image */
+  --card-bg: rgba(45, 55, 72, 0.6); /* Semi-transparent card */
+  --accent-gold: #f4d03f; /* Bright Gold Sun */
+  --text-white: #ffffff;
+  --text-dim: #94a3b8;
   --font-heading: "Oswald", sans-serif;
   --font-body: "Inter", sans-serif;
-  --glass-bg: rgba(255, 255, 255, 0.05);
-  --glass-border: rgba(255, 255, 255, 0.1);
 }
 
 * {
@@ -15,12 +15,15 @@
 }
 
 body {
-  background-color: var(--bg-color);
-  color: var(--text-color);
+  background-color: var(--bg-color); /* Fallback */
+  background: linear-gradient(to bottom right, #2c3e50, #34495e); /* Subtle gradient */
+  color: var(--text-white);
   font-family: var(--font-body);
-  overflow: hidden; /* No scrolling for digital signage */
+  overflow: hidden;
   height: 100vh;
   width: 100vw;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Background Canvas */
@@ -31,281 +34,255 @@ body {
   width: 100%;
   height: 100%;
   z-index: -1;
+  opacity: 0.3; /* Subtle background movement */
 }
 
+/* App Container */
 .app-container {
-  position: relative;
-  height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  height: 100%;
   padding: 2vh 4vw;
+  position: relative;
   z-index: 1;
 }
 
-/* Header */
-.location-header {
-  text-align: center;
+/* --- Header --- */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
   margin-bottom: 2vh;
 }
 
-.location-header h1 {
+.header-left {
+  text-align: left;
+}
+
+.header-left h1 {
   font-family: var(--font-heading);
   font-size: min(8vh, 5vw);
   font-weight: 700;
-  letter-spacing: 2px;
-  line-height: 1;
   text-transform: uppercase;
+  line-height: 0.9;
+  letter-spacing: 1px;
 }
 
-.location-header h2 {
+.header-left h2 {
   font-family: var(--font-heading);
-  font-size: min(4vh, 2.5vw);
+  font-size: min(3vh, 2vw);
+  color: var(--accent-gold);
   font-weight: 400;
-  letter-spacing: 5px;
-  color: rgba(255, 255, 255, 0.7);
   text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-top: 5px;
 }
 
-.header-separator {
-  height: 2px;
-  background-color: var(--accent-color);
-  width: 100%;
-  max-width: 600px; /* Match clock somewhat */
-  margin: 5px auto;
-  opacity: 0.5;
+.header-right {
+  text-align: right;
 }
 
-/* Hero Section */
-.hero-section {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 2vh;
-}
-
-.time-display {
+.time-display-large {
   font-family: var(--font-heading);
-  font-size: min(25vh, 18vw); /* Huge clock */
+  font-size: min(10vh, 6vw);
   font-weight: 700;
   line-height: 0.9;
-  color: var(--text-color);
-  text-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.am-pm {
+  font-size: 0.4em;
+  color: var(--accent-gold);
+  margin-left: 5px;
+}
+
+.date-display-small {
+  font-family: var(--font-body);
+  font-size: min(2.5vh, 1.5vw);
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 5px;
 }
 
 .blink {
   animation: blinker 1s linear infinite;
 }
+@keyframes blinker { 50% { opacity: 0; } }
 
-@keyframes blinker {
-  50% {
-    opacity: 0;
-  }
-}
-
-.gold-separator {
-  height: 6px;
-  background-color: var(--accent-color);
-  width: 100%; /* Will become explicit width via JS to match date */
-  margin: 10px 0;
-  box-shadow: 0 0 10px var(--accent-color);
-}
-
-.date-display {
-  font-family: var(--font-heading);
-  font-size: min(6vh, 4vw);
-  font-weight: 400;
-  letter-spacing: 2px;
-  text-transform: uppercase;
+/* --- Main Weather Section --- */
+.main-weather {
+  flex: 1; /* Take available space */
   display: flex;
-  justify-content: space-between; /* Justify to match width if needed, or text-align center */
-  width: 100%; /* Will limit via JS */
-}
-
-.sync-time {
-  font-size: 0.8rem;
-  opacity: 0.6;
-  margin-top: 5px;
-  font-family: var(--font-body);
-}
-
-/* Current Weather */
-.current-weather {
-  text-align: center;
-  margin-bottom: 4vh;
-}
-
-.temp-display {
-  font-family: var(--font-heading);
-  font-size: min(12vh, 8vw);
-  color: var(--accent-color);
-  font-weight: 700;
-  line-height: 1;
-  text-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
-}
-
-.condition-display {
-  font-size: min(4vh, 2.5vw);
-  text-transform: uppercase;
-  margin-top: 10px;
-  letter-spacing: 1px;
-}
-
-.high-low {
-  font-size: min(3vh, 2vw);
-  opacity: 0.8;
-  margin-top: 5px;
-}
-.high-low span {
-  margin: 0 10px;
-}
-
-/* Metrics Row */
-.metrics-row {
-  display: flex;
-  justify-content: space-around;
-  align-items: flex-end; /* Align bottom */
-  width: 100%;
-  padding: 20px 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.4));
-}
-
-.metric-card {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  flex: 1;
+  gap: 4vw; /* Space between Icon and Text */
+  margin-bottom: 2vh;
 }
 
-.metric-icon {
-  width: 60px;
-  height: 60px;
-  margin-bottom: 10px;
+.weather-icon-large {
+  width: min(25vh, 15vw);
+  height: min(25vh, 15vw);
+  /* The SVG will fill this */
 }
 
-.metric-icon svg {
-  width: 100%;
-  height: 100%;
-  fill: url(#gold-gradient); /* We will define this gradient in SVG */
+.weather-icon-large svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.4)); /* Glow for sun */
 }
 
-.metric-value {
-  font-family: var(--font-heading);
-  font-size: 2rem;
-  font-weight: 600;
+.temp-container {
+    font-family: var(--font-heading);
+    font-size: min(20vh, 12vw);
+    font-weight: 700;
+    line-height: 1;
+    display: flex;
+    align-items: flex-start;
+}
+.degree-symbol {
+    font-size: 0.5em;
+    margin-top: 0.2em;
+    color: var(--accent-gold);
 }
 
-.metric-value .unit {
-  font-size: 1rem;
-  font-weight: 400;
-  opacity: 0.7;
+.weather-details-stacked {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
-.sub-value {
-  font-family: var(--font-body);
-  font-size: 0.9rem;
-  opacity: 0.7;
-  margin-top: 2px;
+.condition-text {
+    font-size: min(5vh, 3vw);
+    font-weight: 600;
+    margin-bottom: 10px;
+    text-transform: capitalize;
 }
 
-.metric-label {
-  font-family: var(--font-body);
-  font-size: 0.9rem;
-  margin-top: 5px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--accent-color);
+.high-low-row {
+    font-size: min(3vh, 1.5vw);
+    color: var(--text-dim); /* Match image grey/gold */
+}
+.high-low-row span {
+    color: var(--accent-gold); /* H: L: labels can be gold? In image they look yellowish/white */
+}
+.pipe {
+    margin: 0 10px;
+    color: rgba(255,255,255,0.3);
 }
 
-/* Footer Forecast */
+
+/* --- Dashboard Cards --- */
+.dashboard-cards {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 3vh;
+    height: 18vh; /* Fixed height for cards */
+}
+
+.info-card {
+    background: var(--card-bg);
+    flex: 1;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.card-icon {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 10px;
+}
+.card-icon svg {
+    width: 100%;
+    height: 100%;
+    fill: var(--accent-gold); /* Or stroke based on icon type */
+}
+
+.card-label {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.7);
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.card-value {
+    font-family: var(--font-heading);
+    font-size: 2.2rem;
+    font-weight: 700;
+    line-height: 1;
+}
+.card-value .unit {
+    font-size: 1rem;
+    font-weight: 400;
+    color: rgba(255,255,255,0.7);
+}
+.direction-text {
+    font-size: 1.2rem;
+    color: var(--accent-gold);
+    margin-left: 5px;
+}
+
+
+/* --- Forecast Footer --- */
 .forecast-footer {
-  width: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(10px);
-  margin: 0 -4vw -2vh -4vw; /* Break out of app-container padding */
-  padding: 20px 4vw;
-  width: 100vw;
-  position: relative;
-  border-top: 1px solid var(--accent-color);
+    background: rgba(0, 0, 0, 0.4);
+    margin: 0 -4vw -2vh -4vw; /* Full width breakout */
+    padding: 1vh 4vw 2vh 4vw;
+    display: flex;
+    flex-direction: column;
 }
 
 .forecast-container {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
 }
 
 .forecast-item {
-  text-align: center;
-  flex: 1;
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    flex: 1;
+    padding: 10px;
+    border-right: 1px solid rgba(255,255,255,0.1);
 }
-.forecast-item:last-child {
-  border-right: none;
-}
+.forecast-item:last-child { border: none; }
 
 .f-day {
-  font-family: var(--font-heading);
-  font-size: 1.2rem;
-  color: var(--accent-color);
-  margin-bottom: 5px;
+    font-weight: 700;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+    text-transform: uppercase;
 }
 
 .f-icon {
-  width: 40px;
-  height: 40px;
-  margin: 5px auto;
+    width: 30px;
+    height: 30px;
+    margin: 5px auto;
 }
+.f-icon svg { width: 100%; height: 100%; }
 
 .f-temp {
-  font-size: 1.2rem;
-  font-weight: 600;
+    font-weight: 700;
+    font-size: 1.1rem;
 }
 .f-low {
-  font-size: 0.9rem;
-  opacity: 0.6;
+    opacity: 0.6;
+    font-size: 0.9rem;
+    margin-left: 5px;
 }
 
 .progress-bar {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 16px;
-  width: 100%;
-  background: linear-gradient(90deg, #d4af37, #fce288, #d4af37);
-  background-size: 200% 100%;
-  animation: shine 5s linear infinite;
-  box-shadow: 0 0 15px var(--accent-color);
-}
-
-@keyframes shine {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}
-
-/* Animations for SVG Icons (CSS parts) */
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-5px);
-  }
-}
-
-@keyframes spin-slow {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+    height: 4px;
+    background: var(--accent-gold);
+    width: 100%;
+    margin-top: 10px;
+    border-radius: 2px;
+    /* Optional glow or progress animation */
 }
