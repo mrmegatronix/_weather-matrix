@@ -1,11 +1,15 @@
 :root {
-  --bg-color: #2b3945; /* Dark Slate Blue/Grey from image */
-  --card-bg: rgba(45, 55, 72, 0.6); /* Semi-transparent card */
-  --accent-gold: #f4d03f; /* Bright Gold Sun */
-  --text-white: #ffffff;
+  --bg-color: #1a202c; /* Deep Slate */
+  --card-bg: rgba(30, 41, 59, 0.7); /* Darker, semi-transparent slate */
+  --accent-gold: #f59e0b; /* Base Gold */
+  --gold-gradient: linear-gradient(135deg, #fce288 0%, #d4af37 50%, #c5a028 100%); /* Premium Metallic */
+  --text-white: #f8fafc;
   --text-dim: #94a3b8;
   --font-heading: "Oswald", sans-serif;
   --font-body: "Inter", sans-serif;
+  --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.15);
+  --shadow-strong: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 * {
@@ -15,8 +19,8 @@
 }
 
 body {
-  background-color: var(--bg-color); /* Fallback */
-  background: linear-gradient(to bottom right, #2c3e50, #34495e); /* Subtle gradient */
+  background-color: var(--bg-color);
+  background: radial-gradient(circle at top right, #2d3748, #1a202c 80%);
   color: var(--text-white);
   font-family: var(--font-body);
   overflow: hidden;
@@ -24,6 +28,7 @@ body {
   width: 100vw;
   display: flex;
   flex-direction: column;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Background Canvas */
@@ -34,7 +39,7 @@ body {
   width: 100%;
   height: 100%;
   z-index: -1;
-  opacity: 0.3; /* Subtle background movement */
+  opacity: 0.6;
 }
 
 /* App Container */
@@ -42,7 +47,7 @@ body {
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 2vh 4vw;
+  padding: 3vh 5vw;
   position: relative;
   z-index: 1;
 }
@@ -53,6 +58,8 @@ body {
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 2vh;
+  border-bottom: 1px solid rgba(255,255,255,0.05); /* Subtle separation */
+  padding-bottom: 20px;
 }
 
 .header-left {
@@ -61,86 +68,112 @@ body {
 
 .header-left h1 {
   font-family: var(--font-heading);
-  font-size: min(8vh, 5vw);
+  font-size: min(8vh, 4.5vw);
   font-weight: 700;
   text-transform: uppercase;
   line-height: 0.9;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
+  background: linear-gradient(to bottom, #ffffff, #e2e8f0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.3);
 }
 
 .header-left h2 {
   font-family: var(--font-heading);
-  font-size: min(3vh, 2vw);
+  font-size: min(3vh, 1.8vw);
   color: var(--accent-gold);
-  font-weight: 400;
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-top: 5px;
+  letter-spacing: 4px;
+  margin-top: 8px;
+  background: var(--gold-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .header-right {
   text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 }
 
 .time-display-large {
   font-family: var(--font-heading);
-  font-size: min(10vh, 6vw);
+  font-size: min(10vh, 5.5vw);
   font-weight: 700;
   line-height: 0.9;
+  color: #fff;
+  text-shadow: 0 4px 15px rgba(0,0,0,0.5); /* Pop the time */
 }
 
 .am-pm {
-  font-size: 0.4em;
-  color: var(--accent-gold);
-  margin-left: 5px;
+  font-size: 0.35em;
+  background: var(--gold-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-left: 8px;
+  vertical-align: top;
 }
 
 .date-display-small {
   font-family: var(--font-body);
-  font-size: min(2.5vh, 1.5vw);
-  color: rgba(255, 255, 255, 0.6);
+  font-size: min(2.5vh, 1.2vw);
+  color: var(--text-dim);
   margin-top: 5px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
 .blink {
-  animation: blinker 1s linear infinite;
+  animation: blinker 1.5s ease-in-out infinite;
+  color: var(--accent-gold);
+  text-shadow: 0 0 10px var(--accent-gold);
 }
-@keyframes blinker { 50% { opacity: 0; } }
+@keyframes blinker { 
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; } 
+}
 
 /* --- Main Weather Section --- */
 .main-weather {
-  flex: 1; /* Take available space */
+  flex: 1; 
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 4vw; /* Space between Icon and Text */
+  gap: 6vw; /* Generous spacing */
   margin-bottom: 2vh;
 }
 
 .weather-icon-large {
-  width: min(25vh, 15vw);
-  height: min(25vh, 15vw);
-  /* The SVG will fill this */
+  width: min(28vh, 14vw);
+  height: min(28vh, 14vw);
+  filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.2));
 }
 
 .weather-icon-large svg {
     width: 100%;
     height: 100%;
-    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.4)); /* Glow for sun */
 }
 
 .temp-container {
     font-family: var(--font-heading);
-    font-size: min(20vh, 12vw);
+    font-size: min(22vh, 12vw);
     font-weight: 700;
-    line-height: 1;
+    line-height: 0.9;
     display: flex;
     align-items: flex-start;
+    color: #fff;
+    /* text-shadow: 0 5px 20px rgba(0,0,0,0.5); */ /* Optional depth */
 }
 .degree-symbol {
-    font-size: 0.5em;
-    margin-top: 0.2em;
-    color: var(--accent-gold);
+    font-size: 0.4em;
+    margin-top: 0.1em;
+    background: var(--gold-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .weather-details-stacked {
@@ -151,22 +184,29 @@ body {
 }
 
 .condition-text {
-    font-size: min(5vh, 3vw);
+    font-size: min(5vh, 2.5vw);
     font-weight: 600;
-    margin-bottom: 10px;
-    text-transform: capitalize;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: var(--gold-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .high-low-row {
-    font-size: min(3vh, 1.5vw);
-    color: var(--text-dim); /* Match image grey/gold */
+    font-family: var(--font-heading);
+    font-size: min(3.5vh, 1.8vw);
+    color: var(--text-dim);
+    letter-spacing: 1px;
 }
-.high-low-row span {
-    color: var(--accent-gold); /* H: L: labels can be gold? In image they look yellowish/white */
+.high-low-row span strong {
+    color: #fff;
+    font-weight: 500;
 }
 .pipe {
-    margin: 0 10px;
-    color: rgba(255,255,255,0.3);
+    margin: 0 15px;
+    color: rgba(255,255,255,0.1);
 }
 
 
@@ -174,70 +214,86 @@ body {
 .dashboard-cards {
     display: flex;
     justify-content: space-between;
-    gap: 20px;
+    gap: 24px;
     margin-bottom: 3vh;
-    height: 18vh; /* Fixed height for cards */
+    height: 16vh; 
 }
 
 .info-card {
     background: var(--card-bg);
     flex: 1;
-    border-radius: 12px;
+    border-radius: 16px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 15px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-    border: 1px solid rgba(255,255,255,0.05);
+    padding: 20px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--shadow-soft);
+    border: var(--glass-border);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+/* Subtle hover effect for interactivity/life */
+/* .info-card:hover { 
+    transform: translateY(-2px); 
+    box-shadow: var(--shadow-strong);
+    background: rgba(30, 41, 59, 0.8);
+} */
+
 .card-icon {
-    width: 40px;
-    height: 40px;
-    margin-bottom: 10px;
+    width: 36px;
+    height: 36px;
+    margin-bottom: 12px;
+    opacity: 0.9;
 }
 .card-icon svg {
     width: 100%;
     height: 100%;
-    fill: var(--accent-gold); /* Or stroke based on icon type */
 }
 
 .card-label {
-    font-size: 0.8rem;
-    color: rgba(255,255,255,0.7);
-    letter-spacing: 1px;
-    margin-bottom: 5px;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    letter-spacing: 1.5px;
+    margin-bottom: 6px;
     text-transform: uppercase;
     font-weight: 600;
 }
 
 .card-value {
     font-family: var(--font-heading);
-    font-size: 2.2rem;
-    font-weight: 700;
+    font-size: 2rem;
+    font-weight: 600;
     line-height: 1;
+    color: #fff;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 .card-value .unit {
     font-size: 1rem;
     font-weight: 400;
-    color: rgba(255,255,255,0.7);
+    color: var(--text-dim);
+    margin-left: 2px;
 }
 .direction-text {
     font-size: 1.2rem;
     color: var(--accent-gold);
-    margin-left: 5px;
+    margin-left: 8px;
+    vertical-align: 2px;
 }
 
 
 /* --- Forecast Footer --- */
 .forecast-footer {
-    background: rgba(0, 0, 0, 0.4);
-    margin: 0 -4vw -2vh -4vw; /* Full width breakout */
-    padding: 1vh 4vw 2vh 4vw;
+    background: rgba(20, 25, 35, 0.6); /* Darker footer */
+    margin: 0 -5vw -3vh -5vw;
+    padding: 1.5vh 5vw 3vh 5vw;
     display: flex;
     flex-direction: column;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    backdrop-filter: blur(15px);
 }
 
 .forecast-container {
@@ -250,39 +306,58 @@ body {
     text-align: center;
     flex: 1;
     padding: 10px;
-    border-right: 1px solid rgba(255,255,255,0.1);
+    border-right: 1px solid rgba(255,255,255,0.05);
 }
 .forecast-item:last-child { border: none; }
 
 .f-day {
-    font-weight: 700;
-    margin-bottom: 5px;
-    font-size: 0.9rem;
-    text-transform: uppercase;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 1rem;
+    color: var(--accent-gold);
+    letter-spacing: 1px;
 }
 
 .f-icon {
-    width: 30px;
-    height: 30px;
-    margin: 5px auto;
+    width: 32px;
+    height: 32px;
+    margin: 8px auto;
 }
-.f-icon svg { width: 100%; height: 100%; }
+.f-icon svg { width: 100%; height: 100%; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
 
 .f-temp {
+    font-family: var(--font-body);
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
+    color: #fff;
 }
 .f-low {
-    opacity: 0.6;
+    opacity: 0.5;
     font-size: 0.9rem;
-    margin-left: 5px;
+    margin-left: 6px;
+    font-weight: 400;
 }
 
 .progress-bar {
-    height: 4px;
-    background: var(--accent-gold);
+    height: 6px;
+    background: linear-gradient(90deg, #d4af37, #fce288, #d4af37);
+    background-size: 200% 100%;
     width: 100%;
-    margin-top: 10px;
-    border-radius: 2px;
-    /* Optional glow or progress animation */
+    margin-top: 15px;
+    border-radius: 3px;
+    animation: gold-flow 4s linear infinite;
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
 }
+
+@keyframes gold-flow {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Animations for Icons - Subtle & Professional */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+.animated-icon { animation: float 6s ease-in-out infinite; }

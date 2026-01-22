@@ -46,8 +46,8 @@ const els = {
 };
 
 // --- Icons (SVGs) ---
-// Using exact SVGs or close approximations to nice filled/line icons
 const ICONS = {
+    // High-quality SVG definitions with gradients
     sun: `<svg viewBox="0 0 24 24" class="animated-icon sun"><defs><linearGradient id="gold-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#fce288;stop-opacity:1" /><stop offset="100%" style="stop-color:#d4af37;stop-opacity:1" /></linearGradient></defs><circle cx="12" cy="12" r="5" fill="url(#gold-gradient)" /><g stroke="url(#gold-gradient)" stroke-width="2"><line x1="12" y1="1" x2="12" y2="4" /><line x1="12" y1="20" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="6.34" y2="6.34" /><line x1="17.66" y1="17.66" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="4" y2="12" /><line x1="20" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="6.34" y2="17.66" /><line x1="17.66" y1="6.34" x2="19.78" y2="4.22" /></g></svg>`,
     
     moon: `<svg viewBox="0 0 24 24" class="animated-icon moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="url(#gold-gradient)"/></svg>`,
@@ -71,16 +71,15 @@ function updateTime() {
     const m = now.getMinutes().toString().padStart(2, '0');
     const amPm = h >= 12 ? 'PM' : 'AM';
     h = h % 12;
-    h = h ? h : 12; // the hour '0' should be '12'
+    h = h ? h : 12; 
     
     els.clockHours.textContent = h.toString().padStart(2, '0');
     els.clockMinutes.textContent = m;
     els.amPm.textContent = amPm;
     
-    // Date
+    // Date: "WEDNESDAY, 21 JANUARY"
     const options = { weekday: 'long', day: 'numeric', month: 'long' };
-    // "Wednesday, 21 January"
-    els.dateDisplay.textContent = now.toLocaleDateString('en-NZ', options);
+    els.dateDisplay.textContent = now.toLocaleDateString('en-NZ', options).toUpperCase();
 }
 
 // --- Weather Data ---
@@ -92,7 +91,7 @@ async function fetchWeather() {
             current: "temperature_2m,weather_code,wind_speed_10m,wind_direction_10m,is_day,precipitation",
             daily: "weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset",
             timezone: "auto",
-            forecast_days: 7 // need at least today + future
+            forecast_days: 7 
         });
 
         const res = await fetch(`${CONFIG.API_URL}?${params}`);
@@ -104,38 +103,35 @@ async function fetchWeather() {
     } catch (e) {
         console.error("Fetch Error", e);
         if(els.currCond) els.currCond.textContent = "Offline";
+        // Optionally retry or show cached data
     }
 }
 
 function updateWeatherUI(data) {
+    if (!data || !data.current || !data.daily) return;
+    
     const current = data.current;
     const daily = data.daily;
     const todayIndex = 0; 
     
     // Main Display
     els.currTemp.textContent = Math.round(current.temperature_2m);
-    els.currCond.textContent = getWeatherDescription(current.weather_code);
-    els.currentIconContainer.innerHTML = getIconForCode(current.weather_code, true); // true = large
+    els.currCond.textContent = getWeatherDescription(current.weather_code).toUpperCase();
+    els.currentIconContainer.innerHTML = getIconForCode(current.weather_code, true);
 
     // High/Low
     els.tempHigh.textContent = Math.round(daily.temperature_2m_max[todayIndex]);
     els.tempLow.textContent = Math.round(daily.temperature_2m_min[todayIndex]);
 
     // Cards
-    // Sunrise (Next)
-    // If today's sunrise is past, show tomorrow? 
-    // Logic: If now > todaySunrise, show tomorrowSunrise? 
-    // "NEXT Sunrise" usually implies the next upcoming one.
-    // For simplicity, let's just show tomorrow's sunrise if it's afternoon, or today's if it's early.
-    // But usually simple weather apps just show Today's Sunrise and Sunset for "Today".
-    // The design says "NEXT SUNRISE" and "TONIGHT'S SUNSET" (or NEXT sunset).
-    // Let's show Today's Sunset and Tomorrow's Sunrise, as that's typical for an evening check.
-    
-    // We'll use index 0 for today's sunset, index 1 for tomorrow's sunrise.
-    els.sunsetTime.textContent = formatTimeShort(new Date(daily.sunset[todayIndex]));
+    // Sunrise (Next) / Sunset (Next)
+    const sunset = new Date(daily.sunset[todayIndex]);
+    const nextSunrise = new Date(daily.sunrise[todayIndex + 1]);
+
+    els.sunsetTime.innerHTML = formatTimeShort(sunset); // using innerHTML to support <small> span if needed, though card CSS handles AM/PM span if passed
     els.sunsetIcon.innerHTML = ICONS.sunset;
 
-    els.sunriseTime.textContent = formatTimeShort(new Date(daily.sunrise[todayIndex + 1]));
+    els.sunriseTime.innerHTML = formatTimeShort(nextSunrise);
     els.sunriseIcon.innerHTML = ICONS.sunrise;
 
     // Wind
@@ -144,8 +140,8 @@ function updateWeatherUI(data) {
     els.windIcon.innerHTML = ICONS.wind;
 
     // Rain
-    // API 'precipitation' is mm (last hour usually or current rate)
-    els.rainAmount.textContent = current.precipitation; 
+    const rainVal = current.precipitation || 0; // Handle null
+    els.rainAmount.textContent = rainVal; 
     els.rainIcon.innerHTML = ICONS.rain;
 
     // Footer Forecast
@@ -156,15 +152,16 @@ function updateWeatherUI(data) {
 }
 
 function renderForecast(daily) {
+    if (!els.forecastContainer) return;
     els.forecastContainer.innerHTML = '';
-    // Display 6 days (Today -> +5 or Tomorrow -> +6)
-    // Design suggests a row of about 6-7 items.
-    for(let i=0; i<6; i++) {
+    
+    // Display 7 days (Today + 6)
+    // Design has 7 columns usually
+    for(let i=0; i<7; i++) {
+        if (!daily.time[i]) continue;
+        
         const date = new Date(daily.time[i]);
-        const dayName = i === 0 ? 'TODU' : date.toLocaleDateString('en-NZ', {weekday:'short'}).toUpperCase(); 
-        // Note: 'TODU' is typo for TODAY? Or THU? in image it says THU FRI SAT... (So just day names)
-        // Image implies starting from TODAY (THU).
-        const finalDayName = i===0 ? 'TODAY' : date.toLocaleDateString('en-NZ', {weekday:'short'}).toUpperCase();
+        const dayName = i === 0 ? 'TODAY' : date.toLocaleDateString('en-NZ', {weekday:'short'}).toUpperCase(); 
 
         const code = daily.weather_code[i];
         const max = Math.round(daily.temperature_2m_max[i]);
@@ -173,10 +170,9 @@ function renderForecast(daily) {
         const el = document.createElement('div');
         el.className = 'forecast-item';
         el.innerHTML = `
-            <div class="f-day">${finalDayName}</div>
+            <div class="f-day">${dayName}</div>
             <div class="f-icon">${getIconForCode(code)}</div>
-            <div class="f-temp">${max}°</div>
-            <div class="f-low">${min}°</div>
+            <div class="f-temp">${max}°<span class="f-low">${min}°</span></div>
         `;
         els.forecastContainer.appendChild(el);
     }
@@ -185,13 +181,13 @@ function renderForecast(daily) {
 // --- Helpers ---
 
 function formatTimeShort(date) {
-    // 09:06 PM
+    // 09:06 <span...>PM</span>
     let h = date.getHours();
     const m = date.getMinutes().toString().padStart(2, '0');
     const amPm = h >= 12 ? 'PM' : 'AM';
     h = h % 12;
     h = h ? h : 12;
-    return `${h.toString().padStart(2, '0')}:${m} <span style="font-size:0.5em">${amPm}</span>`;
+    return `${h.toString().padStart(2, '0')}:${m}<span style="font-size:0.5em; margin-left:4px; opacity:0.7;">${amPm}</span>`;
 }
 
 function getCardinalDirection(angle) {
@@ -214,13 +210,12 @@ function getWeatherDescription(code) {
 
 function getIconForCode(code, large=false) {
     let icon = ICONS.cloud;
+    // Simple Mapping
     if (code === 0 || code === 1) icon = ICONS.sun;
     if (code === 2) icon = ICONS.cloud; // partly
     if (code === 3) icon = ICONS.cloud;
     if (code >= 51 && code <= 99) icon = ICONS.rain;
-    
-    // For large icon, we might want to scale it or wrap it
-    // The SVG styling in CSS handles width/height
+    // Could add snow/storm if SVGs present
     return icon;
 }
 
@@ -237,49 +232,54 @@ window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
 function updateBackgroundState(code) {
-    // if rain, set rain
-    // reset particles
     particles = [];
-    let count = 50;
+    let count = 40; // Less is more for professional look
     let type = 'star';
     
     if (code >= 51) {
-        count = 300;
+        count = 400; // Rain needs density
         type = 'rain';
     }
     
     for(let i=0; i<count; i++) {
-        particles.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            speed: Math.random() * (type==='rain'?15:0.5) + (type==='rain'?10:0.1),
-            length: Math.random() * 20 + 10,
-            type: type
-        });
+        particles.push(createParticle(type));
     }
+}
+
+function createParticle(type) {
+    return {
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        speed: Math.random() * (type==='rain'?10:0.05) + (type==='rain'?10:0.02),
+        size: Math.random() * 2,
+        length: Math.random() * 20 + 10,
+        alpha: Math.random(),
+        type: type
+    };
 }
 
 function animate() {
     ctx.clearRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle = "rgba(255,255,255,0.5)";
-    ctx.strokeStyle = "rgba(174, 194, 224, 0.3)";
     
     particles.forEach(p => {
+        // Update
         p.y += p.speed;
-        if(p.y > canvas.height) {
-            p.y = -p.length;
-            p.x = Math.random() * canvas.width;
-        }
+        if(p.type === 'star') p.y -= p.speed * 2; // Stars float up slowly? Or let's float them up
+        if (p.type === 'star' && p.y < 0) { p.y = canvas.height; p.x = Math.random() * canvas.width; }
+        if (p.type === 'rain' && p.y > canvas.height) { p.y = -p.length; p.x = Math.random() * canvas.width; }
         
+        // Draw
         if (p.type === 'rain') {
+            ctx.strokeStyle = "rgba(174, 194, 224, 0.4)";
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p.x, p.y + p.length);
             ctx.stroke();
         } else {
+            ctx.fillStyle = `rgba(255,255,255,${p.alpha * 0.4})`; // Subtle dust
             ctx.beginPath();
-            ctx.arc(p.x, p.y, 1, 0, Math.PI*2);
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
             ctx.fill();
         }
     });
