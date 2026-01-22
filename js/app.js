@@ -3,11 +3,35 @@ const CONFIG = {
     LAT: -43.5321,
     LON: 172.6362,
     API_URL: "https://api.open-meteo.com/v1/forecast",
-    REFRESH_RATE: 1000 * 60 * 15, // 15 minutes for weather data
+    REFRESH_RATE: 1000 * 60 * 10, // 10 minutes sync
 };
 
-// State
-let weatherData = null;
+// ... (Rest of file unchanged until background logic) ...
+
+// ... inside createParticle ...
+    if (type === 'rain') {
+         return {
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            speed: Math.random() * 15 + 15, // Faster
+            size: Math.random() * 2 + 0.5,
+            length: Math.random() * 30 + 20, // Longer
+            alpha: Math.random() * 0.5 + 0.5, // Brighter
+            type: type
+        };
+    }
+// ...
+
+// ... inside animate loop for rain ...
+        if (p.type === 'rain') {
+            ctx.strokeStyle = `rgba(174, 194, 224, ${p.alpha * 0.8})`; // Much more visible
+            ctx.lineWidth = 2; // Thicker lines for TV
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p.x, p.y + p.length);
+            ctx.stroke();
+        } 
+// ...
+
 
 // DOM Elements - Safe Selection
 const getEl = (id) => document.getElementById(id);
@@ -42,20 +66,24 @@ const els = {
     forecastContainer: getEl('forecast-container'),
 };
 
-// --- Icons (SVGs) - STRICTLY DEFINED ---
+// --- Icons (SVGs) - Uses Global #gold-gradient ---
 const ICONS = {
-    sun: `<svg viewBox="0 0 24 24" class="animated-icon sun"><defs><linearGradient id="gold-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#fce288;stop-opacity:1" /><stop offset="100%" style="stop-color:#d4af37;stop-opacity:1" /></linearGradient></defs><circle cx="12" cy="12" r="5" fill="url(#gold-gradient)" /><g stroke="url(#gold-gradient)" stroke-width="2"><line x1="12" y1="1" x2="12" y2="4" /><line x1="12" y1="20" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="6.34" y2="6.34" /><line x1="17.66" y1="17.66" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="4" y2="12" /><line x1="20" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="6.34" y2="17.66" /><line x1="17.66" y1="6.34" x2="19.78" y2="4.22" /></g></svg>`,
+    sun: `<svg viewBox="0 0 24 24" class="animated-icon sun"><circle cx="12" cy="12" r="5" fill="url(#gold-gradient)" /><g stroke="url(#gold-gradient)" stroke-width="2"><line x1="12" y1="1" x2="12" y2="4" /><line x1="12" y1="20" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="6.34" y2="6.34" /><line x1="17.66" y1="17.66" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="4" y2="12" /><line x1="20" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="6.34" y2="17.66" /><line x1="17.66" y1="6.34" x2="19.78" y2="4.22" /></g></svg>`,
     moon: `<svg viewBox="0 0 24 24" class="animated-icon moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="url(#gold-gradient)"/></svg>`,
     cloud: `<svg viewBox="0 0 24 24" class="animated-icon cloud"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" fill="url(#gold-gradient)" opacity="0.8"/></svg>`,
     rain: `<svg viewBox="0 0 24 24" class="animated-icon rain"><path d="M16 13v8" stroke="url(#gold-gradient)" stroke-width="2"/><path d="M12 13v8" stroke="url(#gold-gradient)" stroke-width="2"/><path d="M8 13v8" stroke="url(#gold-gradient)" stroke-width="2"/><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 3 16.29" fill="none" stroke="url(#gold-gradient)" stroke-width="2"/></svg>`,
     wind: `<svg viewBox="0 0 24 24" class="animated-icon wind"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2" fill="none" stroke="url(#gold-gradient)" stroke-width="2" stroke-linecap="round"/></svg>`,
+    snow: `<svg viewBox="0 0 24 24" class="animated-icon snow"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M4.93 19.07L19.07 4.93" stroke="url(#gold-gradient)" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="3" fill="none" stroke="url(#gold-gradient)"/></svg>`,
+    fog: `<svg viewBox="0 0 24 24" class="animated-icon fog"><path d="M4 15h16M4 10h16M4 20h16M4 5h16" stroke="url(#gold-gradient)" stroke-width="2" stroke-linecap="round" opacity="0.7"/></svg>`,
+    thunder: `<svg viewBox="0 0 24 24" class="animated-icon thunder"><path d="M13 2L6 13h6v9l7-11h-6z" fill="url(#gold-gradient)" stroke="none"/></svg>`,
+    
     sunrise: `<svg viewBox="0 0 24 24"><path d="M12 19V6M5 12l7-7 7 7" stroke="url(#gold-gradient)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 18h2M5 18h2" stroke="url(#gold-gradient)" opacity="0.5"/></svg>`, 
     sunset: `<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7" stroke="url(#gold-gradient)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 18h2M5 18h2" stroke="url(#gold-gradient)" opacity="0.5"/></svg>`, 
 };
 
 // --- Time & Date ---
 function updateTime() {
-    if(!els.clockHours) return; // Safety
+    if(!els.clockHours) return; 
     const now = new Date();
     
     // 12-hour Clock
@@ -77,7 +105,7 @@ function updateTime() {
 // --- Weather Data ---
 async function fetchWeather() {
     try {
-        if(els.currCond) els.currCond.textContent = "Loading..."; // Feedback
+        if(els.currCond) els.currCond.textContent = "Loading...";
 
         const params = new URLSearchParams({
             latitude: CONFIG.LAT,
@@ -88,6 +116,7 @@ async function fetchWeather() {
             forecast_days: 7 
         });
 
+        // STRICT REAL DATA: No fallbacks.
         const res = await fetch(`${CONFIG.API_URL}?${params}`);
         if (!res.ok) throw new Error(`API Error: ${res.status}`);
         const data = await res.json();
@@ -96,14 +125,14 @@ async function fetchWeather() {
         
     } catch (e) {
         console.error("Fetch Error", e);
-        if(els.currCond) els.currCond.textContent = "Connection Error";
+        if(els.currCond) els.currCond.textContent = "API Error"; 
         if(els.currTemp) els.currTemp.textContent = "--";
+        // User explicitly requested ONLY real data, so we stay in error state if it fails.
     }
 }
 
 function updateWeatherUI(data) {
     if (!data || !data.current || !data.daily) {
-        console.warn("Incomplete data", data);
         return;
     }
     
@@ -199,25 +228,30 @@ function getWeatherDescription(code) {
         51: 'Drizzle', 53: 'Drizzle', 55: 'Drizzle',
         61: 'Rain', 63: 'Rain', 65: 'Heavy Rain',
         71: 'Snow', 73: 'Snow', 75: 'Snow',
-        80: 'Showers', 81: 'Showers', 82: 'Violent Showers',
-        95: 'Thunderstorm', 96: 'Thunderstorm'
+        80: 'Rain Showers', 81: 'Rain Showers', 82: 'Violent Showers',
+        95: 'Thunderstorm', 96: 'Thunderstorm', 99: 'Thunderstorm'
     };
-    return codes[code] || 'Cloudy'; // Safe default
+    return codes[code] || 'Unknown'; 
 }
 
 function getIconForCode(code) {
-    // Simple Mapping
     if (code === 0 || code === 1) return ICONS.sun;
     if (code === 2 || code === 3) return ICONS.cloud; 
-    if (code >= 51 && code <= 99) return ICONS.rain;
-    // Default
-    return ICONS.cloud;
+    if (code === 45 || code === 48) return ICONS.fog;
+    if (code >= 51 && code <= 67) return ICONS.rain;
+    if (code >= 71 && code <= 77) return ICONS.snow;
+    if (code >= 80 && code <= 82) return ICONS.rain;
+    if (code >= 85 && code <= 86) return ICONS.snow;
+    if (code >= 95) return ICONS.thunder;
+    
+    return ICONS.cloud; // Safe default
 }
 
-// --- Background (Simple Particle) ---
+// --- Background (Celestial & Particles) ---
 const canvas = document.getElementById('bg-canvas');
 const ctx = canvas ? canvas.getContext('2d') : null;
 let particles = [];
+let celestialBody = { x: 0, y: 0, type: 'sun', visible: false };
 
 function resizeCanvas() {
     if(!canvas) return;
@@ -230,13 +264,21 @@ resizeCanvas();
 function updateBackgroundState(code) {
     if(!canvas) return;
     particles = [];
-    let count = 40; 
+    let count = 50; 
     let type = 'star';
     
-    if (code >= 51) {
-        count = 400; 
-        type = 'rain';
-    }
+    // Cloud/Fog/Overcast (Codes 1, 2, 3, 45, 48)
+    if (code >= 1 && code <= 3) { count = 15; type = 'cloud'; }
+    if (code === 45 || code === 48) { count = 25; type = 'cloud'; }
+
+    // Rain
+    if (code >= 51 && code <= 67) { count = 800; type = 'rain'; }
+    if (code >= 80 && code <= 82) { count = 800; type = 'rain'; }
+    // Snow
+    if (code >= 71 && code <= 77) { count = 300; type = 'snow'; }
+    
+    // If it's just overcast (cloudy) at night, we might want stars AND clouds,
+    // but for simplicity in this engine, we switch modes.
     
     for(let i=0; i<count; i++) {
         particles.push(createParticle(type));
@@ -245,49 +287,90 @@ function updateBackgroundState(code) {
 
 function createParticle(type) {
     if(!canvas) return {};
+    
+    // Cloud Logic
+    if (type === 'cloud') {
+        return {
+            x: Math.random() * canvas.width,
+            y: Math.random() * (canvas.height * 0.6), 
+            speed: Math.random() * 0.2 + 0.05, 
+            size: Math.random() * 60 + 40,
+            length: 0,
+            alpha: Math.random() * 0.1 + 0.05,
+            type: type
+        };
+    }
+
+    if (type === 'rain') {
+         return {
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            speed: Math.random() * 20 + 15, // Faster heavy rain
+            size: 1,
+            length: Math.random() * 40 + 20, // Longer streaks
+            alpha: Math.random() * 0.5 + 0.5, // High visibility
+            type: type
+        };
+    }
+
     return {
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        speed: Math.random() * (type==='rain'?10:0.05) + (type==='rain'?10:0.02),
-        size: Math.random() * 2 + 0.5,
-        length: Math.random() * 20 + 10,
+        speed: Math.random() * (type==='snow'?2:0.05) + 0.1,
+        size: Math.random() * (type==='snow'?3:2) + 0.5,
+        length: 0,
         alpha: Math.random(),
         type: type
     };
 }
 
+// ... celestial update functions ...
+
 function animate() {
     if(!ctx || !canvas) return;
     ctx.clearRect(0,0,canvas.width,canvas.height);
     
+    updateCelestialBody();
+    drawCelestialBody();
+    
     particles.forEach(p => {
-        // Update
         p.y += p.speed;
-        if(p.type === 'star') p.y -= p.speed; 
-        if (p.type === 'star' && p.y < 0) { p.y = canvas.height; p.x = Math.random() * canvas.width; }
-        if (p.type === 'rain' && p.y > canvas.height) { p.y = -p.length; p.x = Math.random() * canvas.width; }
         
-        // Draw
+        if (p.type === 'cloud') {
+            p.x -= p.speed; 
+            if (p.x < -p.size * 2) p.x = canvas.width + p.size;
+        } else if(p.type === 'star') {
+             p.y -= p.speed * 0.5; 
+             if (p.y < 0) { p.y = canvas.height; p.x = Math.random() * canvas.width; }
+        } else {
+            // Rain/Snow
+            if (p.y > canvas.height) { p.y = -p.length; p.x = Math.random() * canvas.width; }
+        }
+        
+        ctx.beginPath();
         if (p.type === 'rain') {
-            ctx.strokeStyle = "rgba(174, 194, 224, 0.4)";
-            ctx.lineWidth = 1;
-            ctx.beginPath();
+            ctx.strokeStyle = `rgba(200, 220, 255, ${p.alpha})`; // Brighter/Blueish
+            ctx.lineWidth = 2.5; // Thicker for TV visibility
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p.x, p.y + p.length);
             ctx.stroke();
+        } else if (p.type === 'cloud') {
+            ctx.fillStyle = `rgba(200, 200, 200, ${p.alpha})`; 
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+            ctx.fill();
         } else {
-            ctx.fillStyle = `rgba(255,255,255,${p.alpha * 0.4})`; 
-            ctx.beginPath();
+            ctx.fillStyle = `rgba(255,255,255,${p.alpha * (p.type==='snow'?0.8:0.4)})`; 
             ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
             ctx.fill();
         }
     });
     requestAnimationFrame(animate);
 }
+
 if(canvas) animate(); 
 
-// Init
 setInterval(updateTime, 1000);
 updateTime();
 fetchWeather();
 setInterval(fetchWeather, CONFIG.REFRESH_RATE);
+

@@ -1,13 +1,13 @@
 :root {
-  --bg-color: #000000; /* Pure Black for contrast */
-  --card-bg: rgba(20, 20, 20, 0.6); /* Darker glass */
-  --accent-gold: #fbbf24; /* Brighter Gold */
-  --gold-gradient: linear-gradient(180deg, #fce288 0%, #d4af37 40%, #c5a028 100%); /* Strong Metallic */
+  --bg-color: #000000;
+  --card-bg: rgba(20, 20, 20, 0.8);
+  --accent-gold: #fbbf24;
+  --gold-gradient: linear-gradient(180deg, #fce288 0%, #d4af37 45%, #c5a028 100%);
   --text-white: #ffffff;
   --text-dim: #9ca3af;
   --font-heading: "Oswald", sans-serif;
   --font-body: "Inter", sans-serif;
-  --glass-border: 1px solid rgba(255, 215, 0, 0.3); /* Gold border hint */
+  --glass-border: 1px solid rgba(255, 215, 0, 0.3);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -22,55 +22,55 @@ body {
   position: relative;
 }
 
-/* Background Canvas - Must be visible */
 #bg-canvas {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0; /* Behind content */
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
   opacity: 1;
 }
 
-/* App Content */
+/* --- Layout: 5% Margin + CSS Grid for No Clipping --- */
 .app-container {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  padding: 3vh 5vw;
-  position: relative;
-  z-index: 2; /* Above canvas */
-  background: radial-gradient(circle at center, transparent 0%, #000 120%); /* Vignette */
+  position: absolute;
+  top: 5vh; bottom: 5vh;
+  left: 5vw; right: 5vw;
+  width: 90vw; height: 90vh;
+  z-index: 2;
+  
+  display: grid;
+  grid-template-rows: auto 1fr auto auto; /* Header, Weather(Fill), Cards, Footer */
+  gap: 2vh;
 }
 
-/* --- Header --- */
+/* --- Row 1: Header --- */
 .dashboard-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 2vh;
+  padding-bottom: 2vh;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
 .header-left h1 {
   font-family: var(--font-heading);
-  font-size: min(8vh, 5vw);
+  font-size: min(6vh, 4vw);
   font-weight: 700;
   text-transform: uppercase;
   line-height: 0.9;
   letter-spacing: 2px;
   color: #fff;
-  text-shadow: 0 0 20px rgba(255,255,255,0.2);
+  text-shadow: 0 0 15px rgba(255,255,255,0.2);
 }
 
 .header-left h2 {
   font-family: var(--font-heading);
-  font-size: min(3vh, 2vw);
+  font-size: min(2.5vh, 1.5vw);
   color: var(--accent-gold);
   font-weight: 400;
   text-transform: uppercase;
   letter-spacing: 4px;
-  margin-top: 5px;
+  margin-top: 0.5vh;
   background: var(--gold-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -80,7 +80,7 @@ body {
 
 .time-display-large {
   font-family: var(--font-heading);
-  font-size: min(10vh, 6vw);
+  font-size: min(10vh, 6vw); /* Larger */
   font-weight: 700;
   line-height: 0.9;
   color: #fff;
@@ -88,11 +88,12 @@ body {
 .am-pm {
   font-size: 0.4em;
   color: var(--accent-gold);
+  margin-left: 5px;
 }
 
 .date-display-small {
   font-family: var(--font-body);
-  font-size: min(2.5vh, 1.2vw);
+  font-size: min(1.8vh, 1.2vw);
   color: rgba(255,255,255,0.7);
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -103,27 +104,28 @@ body {
 .blink { animation: blinker 1s step-start infinite; }
 @keyframes blinker { 50% { opacity: 0; } }
 
-/* --- Main Weather --- */
+/* --- Row 2: Main Weather (Fills Space) --- */
 .main-weather {
-  flex: 1;
+  flex: 1; 
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 5vw;
+  gap: 4vw;
+  padding-bottom: 5vh; /* Push content slightly up so cards have room below */
 }
 
 .weather-icon-large {
-  width: min(25vh, 15vw);
-  height: min(25vh, 15vw);
-  filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.4));
+  width: min(30vh, 18vw); /* Larger */
+  height: min(30vh, 18vw);
+  filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.4));
 }
 .weather-icon-large svg { width: 100%; height: 100%; }
 
 .temp-container {
   font-family: var(--font-heading);
-  font-size: min(20vh, 12vw);
+  font-size: min(32vh, 22vw); /* MASSIVE for TV */
   font-weight: 700;
-  line-height: 1;
+  line-height: 0.8;
   color: #fff;
 }
 .degree-symbol {
@@ -135,59 +137,59 @@ body {
 .weather-details-stacked {
   display: flex;
   flex-direction: column;
+  justify-content: center;
 }
 
 .condition-text {
-  font-size: min(5vh, 2.5vw);
+  font-size: min(6vh, 4vw); /* Larger */
   font-weight: 600;
   text-transform: uppercase;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
   color: #fff;
 }
 .high-low-row {
   font-family: var(--font-heading);
-  font-size: min(3vh, 1.5vw);
-  color: rgba(255,255,255,0.6);
+  font-size: min(4vh, 2.5vw); /* Larger */
+  color: rgba(255,255,255,0.8);
 }
 .high-low-row span { color: var(--accent-gold); }
 .pipe { margin: 0 10px; color: #444; }
 
-/* --- Cards --- */
+/* --- Row 3: Cards --- */
 .dashboard-cards {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  height: 18vh;
-  margin-bottom: 3vh;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px; /* More spacing */
+  height: 20vh; /* Taller cards */
+  margin-top: 2vh; 
 }
 
 .info-card {
-  background: linear-gradient(180deg, rgba(40,40,40,0.8) 0%, rgba(20,20,20,0.9) 100%);
-  flex: 1;
+  background: linear-gradient(180deg, rgba(35,35,35,0.95) 0%, rgba(10,10,10,0.98) 100%);
   border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   position: relative;
-  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.6);
 }
-
 .info-card::before {
   content: '';
   position: absolute;
   top: 0; left: 0; width: 100%; height: 4px;
   background: var(--gold-gradient);
-  opacity: 0.5;
+  opacity: 0.9;
 }
 
-.card-icon { width: 40px; height: 40px; margin-bottom: 10px; }
+.card-icon { width: 6vh; height: 6vh; margin-bottom: 1vh; }
 .card-icon svg { width: 100%; height: 100%; fill: var(--accent-gold); }
 
 .card-label {
-  font-size: 0.75rem;
-  color: #888;
+  font-size: min(2.5vh, 1.2vw); /* Clearly readable */
+  color: #ccc;
+  font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
   margin-bottom: 5px;
@@ -195,51 +197,55 @@ body {
 
 .card-value {
   font-family: var(--font-heading);
-  font-size: 2rem;
+  font-size: min(6vh, 4vw); /* Much Bigger */
   font-weight: 700;
   color: #fff;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
-.card-value .unit { font-size: 1rem; color: #666; font-weight: 400; }
-.direction-text { color: var(--accent-gold); font-size: 1.2rem; margin-left: 5px; }
+.card-value .unit { font-size: 0.5em; color: #888; font-weight: 400; vertical-align: middle; }
+.direction-text { color: var(--accent-gold); font-size: 0.6em; margin-left: 5px; }
 
-/* --- Footer --- */
+/* --- Row 4: Footer --- */
 .forecast-footer {
-  background: rgba(10,10,10,0.8);
-  margin: 0 -5vw -3vh -5vw;
-  padding: 1vh 5vw 0 5vw; /* No bottom padding, handled by height */
-  border-top: 1px solid #333;
+  width: 100%;
+  background: rgba(5,5,5,0.95);
+  padding: 1vh 2vw 0 2vw;
+  border-top: 1px solid #444;
+  border-radius: 12px;
+  overflow: hidden;
+  height: auto; 
 }
 
 .forecast-container {
   display: flex;
   justify-content: space-between;
-  padding-bottom: 15px;
+  padding-bottom: 1vh;
 }
 
 .forecast-item {
   flex: 1;
   text-align: center;
   border-right: 1px solid #222;
-  padding: 5px;
+  padding: 0 5px;
 }
 .forecast-item:last-child { border: none; }
 
 .f-day {
   font-family: var(--font-heading);
-  font-size: 0.9rem;
-  color: #888;
-  margin-bottom: 5px;
+  font-size: min(2.5vh, 1.5vw); /* Readable */
+  color: #bbb;
+  margin-bottom: 8px;
 }
-.f-icon { width: 30px; height: 30px; margin: 0 auto 5px; }
+.f-icon { width: 4vh; height: 4vh; margin: 0 auto 5px; }
 .f-icon svg { width: 100%; height: 100%; }
-.f-temp { font-weight: 700; font-size: 1.1rem; }
-.f-low { color: #555; font-size: 0.9rem; margin-left: 5px; }
+.f-temp { font-weight: 700; font-size: min(3.5vh, 2vw); } /* Readable */
+.f-low { color: #888; font-size: 0.7em; margin-left: 5px; }
 
-/* 60s Progress Bar */
+/* Progress Bar */
 .progress-bar {
-  height: 8px;
+  height: 6px;
   background: var(--gold-gradient);
-  width: 0%; /* Start at 0 */
+  width: 0%;
   animation: fill-60s 60s linear infinite;
   box-shadow: 0 0 10px var(--accent-gold);
 }
@@ -250,5 +256,5 @@ body {
 }
 
 /* Animations */
-@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
 .animated-icon { animation: float 4s ease-in-out infinite; }
