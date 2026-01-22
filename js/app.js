@@ -370,7 +370,61 @@ function createParticle(type) {
     };
 }
 
-// ... celestial update functions ...
+// --- Celestial Body (Sun/Moon) ---
+function updateCelestialBody() {
+    if(!canvas) return;
+    const now = new Date();
+    const h = now.getHours() + now.getMinutes()/60;
+    
+    let isDay = h >= 6 && h < 18;
+    let progress = 0; 
+    
+    if (isDay) {
+        celestialBody.type = 'sun';
+        progress = (h - 6) / 12;
+    } else {
+        celestialBody.type = 'moon';
+        let adjustedH = h < 6 ? h + 24 : h;
+        progress = (adjustedH - 18) / 12;
+    }
+    
+    celestialBody.x = canvas.width - (progress * canvas.width);
+    
+    const horizon = canvas.height * 0.8;
+    const zenith = canvas.height * 0.1;
+    let heightFactor = Math.sin(progress * Math.PI);
+    
+    celestialBody.y = horizon - (heightFactor * (horizon - zenith));
+    celestialBody.visible = true;
+}
+
+function drawCelestialBody() {
+    if (!celestialBody.visible || !ctx) return;
+    
+    const { x, y, type } = celestialBody;
+    const radius = Math.min(canvas.width, canvas.height) * 0.08; 
+    
+    const gradient = ctx.createRadialGradient(x, y, radius * 0.2, x, y, radius * 2);
+    if (type === 'sun') {
+        gradient.addColorStop(0, 'rgba(255, 223, 0, 1)'); 
+        gradient.addColorStop(0.2, 'rgba(255, 140, 0, 0.5)');
+        gradient.addColorStop(1, 'rgba(255, 140, 0, 0)');
+    } else {
+        gradient.addColorStop(0, 'rgba(255, 255, 255, 1)'); 
+        gradient.addColorStop(0.2, 'rgba(200, 200, 255, 0.5)');
+        gradient.addColorStop(1, 'rgba(200, 200, 255, 0)');
+    }
+    
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.arc(x, y, radius * 2, 0, Math.PI * 2);
+    ctx.fill();
+    
+    ctx.fillStyle = type === 'sun' ? '#FFD700' : '#F0F0FF';
+    ctx.beginPath();
+    ctx.arc(x, y, radius * 0.5, 0, Math.PI * 2);
+    ctx.fill();
+}
 
 function animate() {
     if(!ctx || !canvas) return;
