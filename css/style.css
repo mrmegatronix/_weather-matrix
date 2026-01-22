@@ -60,6 +60,25 @@ body {
   border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
+.hea.date-display {
+  font-family: var(--font-heading);
+  font-size: min(3vh, 2vw);
+  color: var(--accent-gold);
+  text-transform: uppercase;
+  margin-top: 5px;
+  letter-spacing: 1px;
+}
+
+.last-sync {
+  font-family: var(--font-body);
+  font-size: min(1.5vh, 1vw);
+  color: rgba(255, 255, 255, 0.4); /* Subtle */
+  margin-top: 2px;
+  text-align: right;
+  letter-spacing: 1px;
+}
+.last-sync span { color: var(--accent-gold); }
+
 .header-left h1 {
   font-family: var(--font-heading);
   font-size: min(6vh, 4vw);

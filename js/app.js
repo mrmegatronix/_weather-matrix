@@ -1,37 +1,10 @@
-// Config
+// Config - STRICT SETTINGS
 const CONFIG = {
     LAT: -43.5321,
     LON: 172.6362,
     API_URL: "https://api.open-meteo.com/v1/forecast",
     REFRESH_RATE: 1000 * 60 * 10, // 10 minutes sync
 };
-
-// ... (Rest of file unchanged until background logic) ...
-
-// ... inside createParticle ...
-    if (type === 'rain') {
-         return {
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            speed: Math.random() * 15 + 15, // Faster
-            size: Math.random() * 2 + 0.5,
-            length: Math.random() * 30 + 20, // Longer
-            alpha: Math.random() * 0.5 + 0.5, // Brighter
-            type: type
-        };
-    }
-// ...
-
-// ... inside animate loop for rain ...
-        if (p.type === 'rain') {
-            ctx.strokeStyle = `rgba(174, 194, 224, ${p.alpha * 0.8})`; // Much more visible
-            ctx.lineWidth = 2; // Thicker lines for TV
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(p.x, p.y + p.length);
-            ctx.stroke();
-        } 
-// ...
-
 
 // DOM Elements - Safe Selection
 const getEl = (id) => document.getElementById(id);
@@ -40,6 +13,7 @@ const els = {
     clockMinutes: getEl('clock-minutes'),
     amPm: getEl('am-pm'),
     dateDisplay: getEl('date-display'),
+    lastSync: getEl('last-sync'),
     
     cityName: getEl('city-name'),
     countryName: getEl('country-name'),
@@ -173,9 +147,16 @@ function loadOfflineData() {
 
 function updateWeatherUI(data) {
     if (!data || !data.current || !data.daily) {
+        console.error("Data missing in updateWeatherUI", data);
         return;
     }
-// ... rest of function unchanged ...
+    
+    // Update Last Sync Time
+    if(els.lastSync) {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        els.lastSync.innerHTML = `Synced: <span>${timeStr}</span>`;
+    }
     
     const current = data.current;
     const daily = data.daily;
@@ -213,6 +194,7 @@ function updateWeatherUI(data) {
     if(els.rainIcon) els.rainIcon.innerHTML = ICONS.rain;
 
     // Footer Forecast
+    console.log("Rendering Forecast with data:", daily);
     renderForecast(daily);
     
     // Background Particles
@@ -220,9 +202,17 @@ function updateWeatherUI(data) {
 }
 
 function renderForecast(daily) {
-    if (!els.forecastContainer) return;
+    if (!els.forecastContainer) {
+        console.error("Forecast Container DOM missing!");
+        return;
+    }
     els.forecastContainer.innerHTML = '';
     
+    if(!daily.time || daily.time.length === 0) {
+         console.error("Daily Time data missing", daily);
+         return;
+    }
+
     for(let i=0; i<7; i++) {
         if (!daily.time[i]) continue;
         
@@ -288,6 +278,7 @@ function getIconForCode(code) {
     return ICONS.cloud; // Safe default
 }
 
+// --- Background (Celestial & Particles) ---
 const canvas = document.getElementById('bg-canvas');
 const ctx = canvas ? canvas.getContext('2d') : null;
 let particles = [];
@@ -322,9 +313,6 @@ function updateBackgroundState(code) {
     if (code >= 80 && code <= 82) { count = 800; type = 'rain'; }
     // Snow
     if (code >= 71 && code <= 77) { count = 300; type = 'snow'; }
-    
-    // If it's just overcast (cloudy) at night, we might want stars AND clouds,
-    // but for simplicity in this engine, we switch modes.
     
     for(let i=0; i<count; i++) {
         particles.push(createParticle(type));
@@ -467,10 +455,9 @@ function animate() {
     requestAnimationFrame(animate);
 }
 
+// Start
 if(canvas) animate(); 
-
 setInterval(updateTime, 1000);
 updateTime();
 fetchWeather();
 setInterval(fetchWeather, CONFIG.REFRESH_RATE);
-
