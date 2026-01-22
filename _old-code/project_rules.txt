@@ -1,0 +1,60 @@
+
+PROJECT: Christchurch Weather Dashboard (Coasters Tavern Style)
+
+OBJECTIVE:
+Create a high-fidelity, single-page digital signage weather dashboard for Christchurch, New Zealand.
+The app must run offline/locally (pwa/spa) but fetch real data when available.
+
+AESTHETICS & THEME:
+- Theme: Dark, "Gold & Black" (Coasters Tavern vibe).
+- Colors: Background #050505, Accents #D4AF37 (Gold), Text White.
+- Fonts: 
+  - Headings/Numbers: 'Oswald' (Condensed, Bold).
+  - Body/Labels: 'Inter' (Clean, Sans).
+- Visual Style: Glassmorphism (backdrop-blur), high contrast, large legible typography for distance viewing.
+
+CORE FEATURES:
+1. Real-time Weather:
+   - Data Source: Open-Meteo API (Latitude: -43.5321, Longitude: 172.6362).
+   - Metrics: Temperature, Description (e.g., Mostly Cloudy), High/Low.
+   - Layout: Must NOT overlap. generous spacing.
+2. Clock & Date:
+   - Large digital clock (12h format).
+   - Date must be VISUALLY the exact same width as the clock time.
+   - City Name (CHRISTCHURCH) must match height/size of Clock.
+   - Separator lines under City and Time must match (Thick Gold).
+   - "Last Data Sync" time must appear UNDER the Date.
+   - ALL displayed times (Clock, Sunrise, Sunset) must have BLINKING colons.
+3. Location Header:
+   - "CHRISTCHURCH" aligned with Clock.
+   - "NEW ZEALAND" aligned with Date.
+4. Detailed Metrics (Row Layout):
+   - Single horizontal line.
+   - Leftmost Box: "TONIGHT'S SUNSET".
+   - Rightmost Box: "NEXT SUNRISE".
+   - Wind Box: Must show Cardinal Direction text (e.g. "NW") under speed.
+   - UV Box: Must show PEAK Value and Time for the day.
+   - Labels (Titles) must be at the BOTTOM of the info box.
+   - Icons must be ANIMATED (floating, spinning, etc).
+5. 7-Day Forecast (Footer):
+   - Full width of screen.
+   - Progress bar must be at the BOTTOM of the page, THICK (e.g., 16px), and GLOWING GOLD.
+6. Background:
+   - Sun/Moon must RISE on RIGHT and SET on LEFT.
+   - Horizon line is the top of the Footer.
+   - Rain speed must be realistic (not hyper-fast).
+
+STRICT DESIGN RULES:
+1. **Typography Size**: NO text on the screen can be smaller than the height of the Date font. All labels must be large and readable.
+2. **Layout**: 
+   - Info boxes must be in a single horizontal line.
+   - Significant spacing between Main Weather and Info Boxes.
+3. **Icons**: Must be "Professional" and High-Fidelity. Use SVGs with Gradients.
+4. **Rain Logic**: If precipitation > 0mm, FORCE the display to show "Rain" icon and background effect.
+5. **Footer**: Must span 100% of the screen width.
+6. **Clipping**: TEXT MUST NOT BE CLIPPED. Ensure margins/padding allow for full font rendering.
+
+ANIMATIONS:
+- Background: Canvas-based particle system.
+- Icons: Subtle floating/spinning animations.
+- Page: Smooth fade-ins on load.

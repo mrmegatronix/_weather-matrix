@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Christchurch Weather Dashboard</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Oswald:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <!-- Background Canvas -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Main Application Container -->
+    <div class="app-container">
+      <!-- Header: Location -->
+      <header class="location-header">
+        <h1 id="city-name">CHRISTCHURCH</h1>
+        <div class="header-separator"></div>
+        <h2 id="country-name">NEW ZEALAND</h2>
+        <div class="header-separator"></div>
+      </header>
+
+      <!-- Hero Section: Clock & Date -->
+      <section class="hero-section">
+        <div class="time-display">
+          <span id="clock-hours">12</span><span class="blink">:</span
+          ><span id="clock-minutes">00</span>
+        </div>
+        <div class="gold-separator"></div>
+        <div class="date-display" id="date-display">MONDAY, JANUARY 1</div>
+        <div class="sync-time" id="last-sync">Last Data Sync: --:--</div>
+      </section>
+
+      <!-- Main Weather Display -->
+      <section class="current-weather">
+        <div class="temp-display" id="current-temp">--°</div>
+        <div class="condition-display" id="current-condition">Loading...</div>
+        <div class="high-low">
+          <span>H: <span id="temp-high">--</span>°</span>
+          <span>L: <span id="temp-low">--</span>°</span>
+        </div>
+      </section>
+
+      <!-- Metrics Row -->
+      <section class="metrics-row">
+        <!-- Sunset -->
+        <div class="metric-card">
+          <div class="metric-icon" id="sunset-icon">
+            <!-- SVG injected via JS -->
+          </div>
+          <div class="metric-value" id="sunset-time">--:--</div>
+          <div class="metric-label">TONIGHT'S SUNSET</div>
+        </div>
+
+        <!-- Wind -->
+        <div class="metric-card">
+          <div class="metric-icon" id="wind-icon">
+            <!-- SVG injected via JS -->
+          </div>
+          <div class="metric-value">
+            <span id="wind-speed">--</span> <span class="unit">km/h</span>
+            <div class="sub-value" id="wind-direction">--</div>
+          </div>
+          <div class="metric-label">WIND</div>
+        </div>
+
+        <!-- UV Index -->
+        <div class="metric-card">
+          <div class="metric-icon" id="uv-icon">
+            <!-- SVG injected via JS -->
+          </div>
+          <div class="metric-value">
+            <span id="uv-value">--</span>
+            <div class="sub-value" id="uv-time">Max @ --:--</div>
+          </div>
+          <div class="metric-label">UV INDEX</div>
+        </div>
+
+        <!-- Sunrise -->
+        <div class="metric-card">
+          <div class="metric-icon" id="sunrise-icon">
+            <!-- SVG injected via JS -->
+          </div>
+          <div class="metric-value" id="sunrise-time">--:--</div>
+          <div class="metric-label">NEXT SUNRISE</div>
+        </div>
+      </section>
+
+      <!-- Footer: 7-Day Forecast -->
+      <footer class="forecast-footer">
+        <div class="forecast-container" id="forecast-container">
+          <!-- Forecast Items injected via JS -->
+        </div>
+        <div class="progress-bar"></div>
+      </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/app.js"></script>
+  </body>
+</html>
